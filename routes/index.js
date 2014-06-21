@@ -1,12 +1,6 @@
 var express = require('express');
 var router = express.Router();
 
-/* GET home page. */
-router.get('/', function(req, res) {
-  res.render('index', { title: 'Express' });
-});
-
-
 /**
 * GET ROUTES BELOW
 */
@@ -15,6 +9,15 @@ router.get('/', function(req, res) {
 * Retrieve profile stack on pull-to-refresh
 * @author George
 */ 
+router.get('/', function(req, res) {
+	res.render('index', { title: 'Fistbump'});
+});
+
+
+router.get('/create_event', function(req, res) {
+  res.render('create_event', { title: 'Create Event' });
+});
+
 router.get('/getStack', function(req, res) {
 
 	/**

@@ -1,0 +1,10 @@
+extends layout
+
+block content
+	h1 #{title}	
+	form#formGenUrl(name="createEvent",method="post",action="/createEvent")
+		input#event_name(type="text", placeholder="Event Name", name="event_name")
+		p
+		input#event_password(type="text", placeholder="Event Password", name="event_password")
+		p
+		button#btnSubmit(type="submit") Create Event
