@@ -14,4 +14,7 @@ This is the repo for the server for fist bump.
 7. the set up is now complete. server available at localhost:3000/<routes> 
 8. put in your config.js (not version controlled) with your api key and secret and you're good to go!
 
-
+# database and in-memory store
+==============================
+1. mongodb
+2. redis (listening at port 6379)

@@ -1,3 +1,4 @@
+// dependencies
 var express = require('express');
 var path = require('path');
 var favicon = require('static-favicon');
@@ -5,21 +6,40 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
+var session = require('express-session'); // default express in-memory session
+var RedisStore = require('connect-redis')(session); // using redis in place of express's default MemoryStore 
+
+
 var routes = require('./routes/index');
 var users = require('./routes/users');
 
+// instantiate one instance of express
 var app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
+// app.use default path is '/'
 app.use(favicon());
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+
+app.use(session({ 
+    store: new RedisStore({
+        host: '127.0.0.1',
+        prefix: 'yologeorge',
+        port: 6379,
+        db: 0,
+        pass: 'durndurndurndurn'
+    }),
+    secret: 'keyboardcat'}));
+
+
 
 app.use('/', routes);
 app.use('/users', users);
