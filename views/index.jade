@@ -3,5 +3,19 @@ extends layout
 block content
 	h1 #{title}	
 
-	<!-- we can weave HTML with jade templating engine! -->
-	<a href="/create_event">Create an Event here</a>
+	if user
+
+		h2 Welcome #{user}
+		p
+
+		<!-- we can weave HTML with jade templating engine! -->
+		<a href="/create_event?access_token=#{access_token}">Create an Event here</a>
+
+
+	else
+		<!-- OAuth 2.0 test -->
+		<a href="/oauth/linkedin/"> Login </a>
+		
+		
+
+	

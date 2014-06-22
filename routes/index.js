@@ -1,16 +1,60 @@
 var express = require('express');
 var router = express.Router();
+var fbConfig = require('../lib/config'); // grab config file on load
+var Linkedin = require('node-linkedin')(fbConfig.api_key,fbConfig.secret,fbConfig.callback_url);
+var linkedin; // variable of global scope, the rest of the variables are scoped within their routes for namespace sanity
 
 /**
 * GET ROUTES BELOW
 */
 
 /**
-* Retrieve profile stack on pull-to-refresh
-* @author George
-*/ 
+* This route utilizes the node-linkedin wrapper for OAuth 2.0. Once authenticated, an access token is returned which will be 
+* used in subsequent requests.
+*/
+router.get('/oauth/linkedin', function(req, res) {
+    // This will ask for permisssions etc and redirect to callback url.
+    Linkedin.auth.authorize(res, ['r_basicprofile', 'r_fullprofile', 'r_emailaddress', 'r_network', 'r_contactinfo', 'rw_nus', 'rw_groups', 'w_messages']);
+
+});
+
+router.get('/oauth/linkedin/oauth_callback', function(req,res) {
+	Linkedin.auth.getAccessToken(res, req.query.code, function(err, results) {
+        if ( err )
+            return console.error(err);
+
+        console.log(results);
+
+        return res.redirect('/?access_token=' + JSON.parse(results).access_token);
+    });
+});
+
 router.get('/', function(req, res) {
-	res.render('index', { title: 'Fistbump'});
+
+	if ( req.query.access_token != undefined ) {
+
+		linkedin = Linkedin.init(req.query.access_token);
+
+		var self_information = linkedin.people.me(function(err, $in) {
+			console.log($in);
+			return $in;
+		}); // upon first query store in session information or memcached
+
+			res.render('index',  { 
+			title: 'Fistbump',
+			user: 'George',
+			access_token: req.query.access_token
+	 	});
+
+	} else {
+
+		res.render('index', {
+			title: 'Fistbump',
+			user: '',
+			access_token: req.query.access_token
+		});
+	}
+
 });
 
 
