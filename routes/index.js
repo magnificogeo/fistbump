@@ -4,6 +4,9 @@ var fbConfig = require('../lib/config'); // grab config file on load
 var Linkedin = require('node-linkedin')(fbConfig.api_key,fbConfig.secret,fbConfig.callback_url);
 var linkedin; // variable of global scope, the rest of the variables are scoped within their routes for namespace sanity
 
+var db = require('monk')('localhost/fbdb');
+var db_users = db.get('users');
+
 var self_information; // variable of global scope to store the user information once.
 
 
@@ -35,12 +38,11 @@ router.get('/oauth/linkedin/oauth_callback', function(req,res) {
 
 		self_information = linkedin.people.me(function(err, $in) {
 			console.log($in);
+			db_users.insert($in);
 			return $in;
 		}); 
 
-		/*if ( !req.session.user_info ) {
-			req.session.user_info = self_information;
-		}*/
+
 
         return res.redirect('/?access_token=' + JSON.parse(results).access_token); // @TODO: return a unique key that will query for access_token in memory store
     });
